@@ -1,0 +1,14 @@
+{
+  "name": "bun-pal-breeder",
+  "module": "index.ts",
+  "type": "module",
+  "devDependencies": {
+    "@types/bun": "latest"
+  },
+  "peerDependencies": {
+    "typescript": "^5.0.0"
+  },
+  "dependencies": {
+    "uesavetool": "^1.1.7"
+  }
+}

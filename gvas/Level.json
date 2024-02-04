@@ -1,0 +1,16 @@
+{
+  "magic": 1396790855,
+  "save_game_version": 3,
+  "package_file_version_ue4": 522,
+  "package_file_version_ue5": 1008,
+  "engine_version_major": 5,
+  "engine_version_minor": 1,
+  "engine_version_patch": 1,
+  "engine_version_changelist": 0,
+  "engine_version_branch": "++UE5+Release-5.1\u0000",
+  "custom_version_format": 3,
+  "custom_format_data": {
+    "count": 69,
+    "entries": []
+  }
+}
