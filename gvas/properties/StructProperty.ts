@@ -30,21 +30,48 @@ export class StructProperty extends Property {
   get Count() {
     return this.Properties.length;
   }
-  deserialize(serial, size) {
-    // console.log(`Deserializing ${this.Name} Size: ${size}`)
-    serial.seek(4);
-    this.StoredPropertyType = serial.readString();
-    serial.seek(17);
-    let end = serial.tell + size;
-    let i = 0;
-    while (serial.tell < end) {
-      let Name = this.StoredPropertyType;
-      let Type = "Tuple";
-      let prop = PropertyFactory.create({ Name, Type });
-      prop.deserialize(serial);
-      this.Properties.push(prop);
-      i++;
+  structValue(struct_type: string, serial: Serializer) {
+    if (struct_type == "Vector") {
+      return serial.vector_dict();
+    } else if (struct_type == "DateTime") {
+      return serial.u64();
+    } else if (struct_type == "Guid") {
+      return serial.guid();
+    } else if (struct_type == "Quat") {
+      return serial.quat_dict();
+    } else if (struct_type == "LinearColor") {
+      return {
+        r: serial.float(),
+        g: serial.float(),
+        b: serial.float(),
+        a: serial.float(),
+      };
+    } else {
+      console.log(`Assuming struct type: ${struct_type}`);
     }
+  }
+  deserialize(serial: Serializer, size: number) {
+    console.log(`Deserializing ${this.Name} Size: ${size}`);
+    const struct_type = serial.fstring();
+    const struct_id = serial.read(16);
+    const _id = serial.read(1);
+    const value = serial.u64();
+    console.log({ struct_type, struct_id, _id, value });
+
+    // const value = serial.struct_value(struct_type, path)
+    // serial.seek(4);
+    // this.StoredPropertyType = serial.fstring();
+    // serial.seek(17);
+    // let end = serial.tell + size;
+    // let i = 0;
+    // while (serial.tell < end) {
+    //   let Name = this.StoredPropertyType;
+    //   let Type = "Tuple";
+    //   let prop = PropertyFactory.create({ Name, Type });
+    //   prop.deserialize(serial);
+    //   this.Properties.push(prop);
+    //   i++;
+    // }
     // console.log(`Done Deserializing ${this.Name} Offset: ${serial.tell}`)
     return this;
   }
