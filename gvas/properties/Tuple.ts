@@ -23,15 +23,24 @@ export class Tuple extends Property {
   get Count() {
     return this.Properties.length;
   }
-  deserialize(serial) {
-    let Name;
-    while ((Name = serial.readString()) !== "None\0") {
-      let Type = serial.readString();
-      let Size = serial.readInt32();
+  deserialize(serial: Serializer) {
+    let i = 3;
+    while (i) {
+      const Name = serial.fstring();
+      if (Name.length > 1024) break;
+
+      if (Name == "None") break;
+
+      const Type = serial.fstring();
+      const Size = serial.u64();
+      console.log({ Name, Type, Size });
+
       let prop = PropertyFactory.create({ Name, Type });
-      prop.deserialize(serial, Size);
+      prop.deserialize(serial, Number(Size));
       this.Properties.push(prop);
+      i--;
     }
+
     return this;
   }
   serialize() {
