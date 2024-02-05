@@ -1,5 +1,5 @@
 import { inflateSync } from "zlib";
-import { GvasHeader, Serializer } from "./gvas";
+import { Gvas, GvasHeader, Serializer } from "./gvas";
 import fs from "fs";
 
 function uint8ArrayToNum(arr: Uint8Array) {
@@ -32,9 +32,7 @@ fs.readFile("./Level.sav", (err, buffer) => {
   decompressed = inflateSync(decompressed);
   console.log(decompressed.length);
 
-  console.log(new TextDecoder().decode(decompressed.subarray(0, 4)));
-
-  const gvas = new GvasHeader();
+  const gvas = new Gvas();
   const serial = new Serializer(decompressed);
   gvas.deserialize(serial);
 
