@@ -1,6 +1,6 @@
-import { Property } from "./index.ts";
-import { Serializer } from "../serializer.ts";
 import { SerializationError } from "../property-errors";
+import { Serializer } from "../serializer.ts";
+import { Property } from "./index.ts";
 
 export class IntProperty extends Property {
   constructor() {
@@ -8,13 +8,10 @@ export class IntProperty extends Property {
     this.Property = [];
   }
   get Size() {
-    return this.Name.length + 4 +
-      this.Type.length + 4 +
-      13;
+    return this.Name.length + 4 + this.Type.length + 4 + 13;
   }
-  deserialize(serial) {
-    this.Property[0] = serial.readInt32();
-    serial.seek(1);
+  deserialize(serial: Serializer) {
+    this.Property[0] = serial.read(1);
     this.Property[1] = serial.readInt32();
     return this;
   }
