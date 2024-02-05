@@ -16,13 +16,13 @@ export class Serializer {
   seek(count: number) {
     if (this._offset >= this._data.length) {
       throw new Error(
-        `Reached end of Buffer at offset 0x${this.tell.toString(16)}`,
+        `Reached end of Buffer at offset 0x${this.tell.toString(16)}`
       );
     }
     return (this._offset += count);
   }
   read(count: number) {
-    return this.Data.slice(this.tell, this.seek(count));
+    return this.Data.subarray(this.tell, this.seek(count));
   }
   i32() {
     let int = this.Data.readInt32LE(this.tell);
@@ -52,14 +52,30 @@ export class Serializer {
     this.seek(4);
     return int;
   }
+  u64() {
+    let int = this.Data.readBigUInt64LE(this.tell);
+    this.seek(8);
+    return int;
+  }
+  float() {
+    let float = this.Data.readFloatLE(this.tell);
+    this.seek(4);
+    return float;
+  }
   readFloat() {
     let float = this.Data.readFloatLE(this.tell);
     this.seek(4);
     return float;
   }
+  readString() {
+    let length = this.readInt32();
+    return this.read(length).toString("utf8");
+  }
   fstring() {
     let length = this.i32();
-    return this.read(length).toString("utf8");
+    console.log({ length });
+    const buf = this.Data.subarray(this.tell, this.seek(length) - 1);
+    return buf.toString("ascii");
   }
   write(buf: { copy: (arg0: Buffer, arg1: number) => number }) {
     this._offset += buf.copy(this.Data, this.tell);
@@ -86,5 +102,28 @@ export class Serializer {
   }
   static alloc(size: number) {
     return new Serializer(Buffer.alloc(size));
+  }
+  double() {
+    let float = this.Data.readDoubleLE(this.tell);
+    this.seek(8);
+    return float;
+  }
+  vector_dict() {
+    return {
+      x: this.double(),
+      y: this.double(),
+      z: this.double(),
+    };
+  }
+  guid() {
+    return this.read(16);
+  }
+  quat_dict() {
+    return {
+      x: this.double(),
+      y: this.double(),
+      z: this.double(),
+      w: this.double(),
+    };
   }
 }
